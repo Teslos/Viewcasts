@@ -1,0 +1,11 @@
+Viewcasts is the program for visualization of simulation results.
+It visualizes the data from a Finite Volume or Finite Element simulations.
+Currently uses proprietary format, but I plan to change it to use some
+of the open source formats like NetCDF, Gmsh etc.
+
+It uses OpenMotif and X windows library for interface and OpenGL for 
+graphics primitives.
+
+
+
+ 
