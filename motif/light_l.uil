@@ -1,0 +1,27 @@
+!
+!
+value
+
+! Scale
+scaleBText:  "Brightness";
+scaleRText : "Red";
+scaleGText : "Green";
+scaleBLText : "Blue";
+minValue: 0;
+maxValue: 100;
+
+! RadioBox for numbers
+firstText: "1";
+secondText: "2";
+thirdText: "3";
+fourthText: "4";
+fifthText: "5";
+sixthText: "6";
+seventhText: "7";
+eigthText: "8";
+
+! Labels for options
+labelStandard: "Standard";
+labelCustom: "Custom";
+labelEye: "Eye";
+labelNoLight: "No Lighting";

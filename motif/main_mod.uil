@@ -1,0 +1,71 @@
+module mainModul
+
+    names = case_sensitive
+    version = 'color3d V 0.5'
+    character_set = iso_latin1
+procedure
+    colorsDialogCB();
+    shadingDialogCB();
+    create_cutShellCB();
+
+value
+! Labels
+labelColors: "Colors";
+labelShading: "Shading";
+labelCut: "Cut";
+
+! importierte Objekte
+object
+    topWidget   : imported XmDialogShell;       ! from colors_ui.uil
+    topWidgetLight : imported XmDialogShell;       ! from light_ui.uil
+    messageBox2 : imported XmMessageBox; ! from cut.uil
+
+object 
+    extra: XmCascadeButton {
+        arguments {
+           XmNsubMenuId = mainList;
+        };
+    };
+
+object 
+    cut: XmCascadeButton {
+	    arguments {
+	       XmNlabelString = labelCut;
+        };
+       
+        callbacks {
+		   XmNactivateCallback = procedure create_cutShellCB();
+        };
+    };
+
+object
+    mainList : XmPulldownMenu{
+
+        controls {
+            XmPushButton colors;
+            XmPushButton shading;
+	};
+    };
+    
+object
+    colors: XmPushButton {
+       arguments {
+           XmNlabelString = labelColors;
+       };
+       callbacks {
+           XmNactivateCallback = procedure colorsDialogCB();
+       };
+     
+    };
+
+object
+    shading: XmPushButton {
+       arguments {
+           XmNlabelString = labelShading;
+       };
+       callbacks {
+           XmNactivateCallback = procedure shadingDialogCB();
+       };
+    };
+
+end module;

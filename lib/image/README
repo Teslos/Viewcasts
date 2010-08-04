@@ -1,0 +1,9 @@
+
+                     toolbox/src/haeberli/ipaste_ogl README
+
+
+    This is an opengl implementation of ipaste which relies solely on xlib.  
+    Included are the necessary incarnations of the three libgutil files:  
+    fastimg.c, file.c, and misc.c needed by ipaste.  Some additional headers
+    from ../include are referenced.  (ipaste_ogl.sh is a simple try-it-out
+    script.)

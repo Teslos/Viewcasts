@@ -1,0 +1,29 @@
+module fileSelModul
+
+    names = case_sensitive
+    version = 'UilDemo V 2.0'
+    character_set = iso_latin1
+
+procedure
+    fsdInitCB();
+    fsdFinishCB();
+    unmanageCB();
+
+list
+    multiCallback : procedures {
+        fsdFinishCB();
+        unmanageCB();
+    };
+
+object
+    ladenDialog : XmFileSelectionDialog {
+        arguments {
+            XmNdialogStyle = XmDIALOG_APPLICATION_MODAL;
+        };
+        callbacks {
+            MrmNcreateCallback = procedure fsdInitCB();
+            XmNokCallback = procedures multiCallback;
+            XmNcancelCallback = procedure unmanageCB();
+        };
+    };
+end module;

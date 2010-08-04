@@ -1,0 +1,592 @@
+! this is module for light_interface
+!
+!
+
+! module
+
+module mainLight
+names = case_sensitive
+character_set = iso_latin1
+include file ("light_l.uil");
+procedure
+loadLightCB();
+saveAsLightCB();
+defLightCB();
+lightModelCB(integer);
+lightSetBrightCB();
+lightSetRedCB();
+lightSetGreenCB();
+lightSetBlueCB();
+setLightNumCB(integer);
+initOGLWidgetCB();
+exposeCB();
+initCB();
+eyeCB();
+nolightCB();
+standardCB();
+customCB();
+okLightCB();
+cancelLightCB();
+applyLightCB();
+shadingDialogCB();
+
+value
+WIDTH : 120;
+HEIGHT : 120;
+FIRST_LIGHT : 1;
+SECOND_LIGHT : 2;
+THIRD_LIGHT : 3;
+FOURTH_LIGHT : 4;
+FIFTH_LIGHT  : 5;
+SIXTH_LIGHT  : 6;
+SEVENTH_LIGHT : 7;
+EIGHTH_LIGHT : 8;
+AMBIENT_LIGHT : 1;
+DIFFUSE_LIGHT : 2;
+SPOT_LIGHT : 3;
+
+object
+topWidgetLight: XmDialogShell {
+  controls {
+    XmForm mainForm;
+  };
+  callbacks {
+    !MrmNcreateCallback = procedure shadingDialogCB();
+  };
+};
+
+object
+mainForm: XmForm {
+  controls {
+    XmFrame framefControls;
+    XmFrame framelModel;
+    XmFrame framePLight;
+    XmFrame framelNum;
+    XmFrame framelPos;
+    XmFrame framelCus;
+    XmPushButton okLight;
+    XmPushButton cancelLight;
+    XmPushButton applyLight;
+  };
+};
+
+object
+    ladenDialog : imported XmFileSelectionDialog;
+
+object 
+framefControls: XmFrame {
+  controls {
+    XmRowColumn fileControls;
+  };
+  
+  arguments {
+    XmNtopAttachment = XmATTACH_FORM;
+    XmNleftAttachment = XmATTACH_FORM;
+  };
+};
+ 
+object
+fileControls: XmRowColumn {
+  controls {
+    XmPushButton load;
+    XmPushButton saveAs;
+    XmPushButton default;
+    unmanaged XmFileSelectionDialog ladenDialog;
+  };
+};
+
+object
+load: XmPushButton {
+  arguments {
+    XmNlabelString = 'Load';
+  };
+  callbacks {
+    XmNactivateCallback = procedure loadLightCB();
+  };
+};
+
+  object
+    saveAs: XmPushButton {
+    arguments {
+      XmNlabelString = 'Save As...';
+    };
+
+    callbacks {
+      XmNactivateCallback = procedure saveAsLightCB();
+    };
+  };
+
+  object
+    default: XmPushButton {	
+    arguments {
+      XmNlabelString = 'Default';
+    };
+
+    callbacks {
+      XmNactivateCallback = procedure defLightCB();
+    };
+
+  };
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!	
+  ! Controls for light model
+  !!!!!!!!!!!!!!!!!!!!!!!!!!
+  object
+  framelModel: XmFrame {
+    controls {
+      XmRowColumn lightModel;
+    };
+    arguments {
+      XmNtopAttachment = XmATTACH_FORM;
+      XmNleftAttachment = XmATTACH_WIDGET;
+      XmNleftWidget = XmFrame framefControls;
+    };
+  };
+  
+  object
+    lightModel: XmRowColumn {
+    controls {
+      XmRadioBox chooseLight;
+    };
+  };
+
+  object
+    chooseLight: XmRadioBox {
+    arguments {
+      XmNentryClass = class_rec_name('XmToggleButton');
+    };
+    
+    controls {
+      XmToggleButton ambient;
+      XmToggleButton diffuse;
+      XmToggleButton spot;
+    };
+  };
+
+  object
+    ambient: XmToggleButton {
+    arguments {
+      XmNset = false;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure lightModelCB(AMBIENT_LIGHT);
+    };
+  };
+
+  object
+    diffuse: XmToggleButton {
+    arguments {
+      XmNset = false;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure lightModelCB(DIFFUSE_LIGHT);
+    };
+  };
+
+  object
+    spot: XmToggleButton {
+    arguments {
+      XmNset = false;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure lightModelCB(SPOT_LIGHT);
+    };
+  };
+
+  !!!!!!!!!!!!!!!!!!!
+  ! Light Properties
+  !!!!!!!!!!!!!!!!!!!
+
+  object 
+  framePLight: XmFrame {
+    controls {
+      XmRowColumn propLight;
+    };
+    arguments {
+      XmNtopAttachment = XmATTACH_FORM;
+      XmNrightAttachment = XmATTACH_FORM;
+      XmNleftAttachment = XmATTACH_WIDGET;
+      XmNleftWidget = XmFrame framelModel;
+      
+    };
+  };
+
+  object
+    propLight: XmRowColumn {
+    controls {
+      XmScale brightness;
+      XmScale red;
+      XmScale green;
+      XmScale blue;
+    };
+  };
+  
+  object
+    brightness: XmScale {
+    arguments{
+      XmNminimum = minValue;
+      XmNmaximum  = maxValue;
+      XmNshowValue = true;
+      XmNdecimalPoints = 2;
+      XmNtitleString = scaleBText;
+      XmNorientation = XmHORIZONTAL;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure lightSetBrightCB();
+      XmNdragCallback = procedure lightSetBrightCB();
+    };
+  };
+
+  object
+    red: XmScale {
+    arguments {
+      XmNminimum = minValue;
+      XmNmaximum = maxValue;
+      XmNshowValue = true;
+      XmNdecimalPoints = 2;
+      XmNtitleString = scaleRText;
+      XmNorientation = XmHORIZONTAL;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure lightSetRedCB();
+      XmNdragCallback = procedure lightSetRedCB();
+    };
+  };
+
+  object
+    green: XmScale {
+    arguments {
+      XmNminimum = minValue;
+      XmNmaximum = maxValue;
+      XmNshowValue = true;
+      XmNdecimalPoints = 2;
+      XmNtitleString = scaleGText;
+      XmNorientation = XmHORIZONTAL;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure lightSetGreenCB();
+      XmNdragCallback = procedure lightSetGreenCB();
+    };
+  };
+
+  object
+    blue: XmScale {
+    arguments {
+      XmNminimum = minValue;
+      XmNmaximum = maxValue;
+      XmNshowValue = true;
+      XmNdecimalPoints = 2;
+      XmNtitleString = scaleBLText;
+      XmNorientation = XmHORIZONTAL;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure lightSetBlueCB();
+      XmNdragCallback = procedure lightSetBlueCB();
+    };
+  };
+
+
+  !!!!!!!!!!!!!!!!!!!!
+  ! Lights numbers
+  !!!!!!!!!!!!!!!!!!!!
+  object
+  framelNum: XmFrame {
+    controls {
+      XmRowColumn lightNum;
+    };
+    arguments{
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget = XmFrame framePLight;
+      XmNleftAttachment = XmATTACH_FORM;
+      XmNrightAttachment = XmATTACH_FORM;
+    };
+  };
+
+  object
+    lightNum : XmRowColumn {
+    controls {
+      XmRadioBox listLights;
+    };
+
+    arguments {
+      XmNorientation = XmHORIZONTAL;
+    };
+  };
+
+  object
+    listLights: XmRadioBox {
+    arguments {
+      XmNentryClass = class_rec_name ('XmToggleButton');
+      XmNorientation = XmHORIZONTAL;
+    };
+
+    controls {
+      XmToggleButton first;
+      XmToggleButton second;
+      XmToggleButton third;
+      XmToggleButton fourth;
+      XmToggleButton fifth;
+      XmToggleButton sixth;
+      XmToggleButton seventh;
+      XmToggleButton eighth;
+    };
+  };
+
+  object
+    first: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = firstText;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(FIRST_LIGHT);
+    };
+  };
+
+  object
+    second: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = secondText;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(SECOND_LIGHT);
+    };
+  };
+  
+  object
+    third: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = thirdText;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(THIRD_LIGHT);
+    };
+  };
+
+  object
+    fourth: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = fourthText;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(FOURTH_LIGHT);
+    };
+  };
+  object
+    fifth: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = fifthText;
+    };
+
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(FIFTH_LIGHT);
+    };
+  };
+
+  object
+    sixth: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = sixthText;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(SIXTH_LIGHT);
+    };
+  };
+  object
+    seventh: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = seventhText;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(SEVENTH_LIGHT);
+    };
+  };
+
+  object
+    eighth: XmToggleButton {
+    arguments {
+      XmNset = false;
+      XmNlabelString = eigthText;
+    };
+    
+    callbacks {
+      XmNvalueChangedCallback = procedure setLightNumCB(EIGHTH_LIGHT);
+    };
+  };
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !! Drawing area for OpenGl widget
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  object
+  framelPos: XmFrame {
+    controls {
+      XmRowColumn lightPos;
+    };
+    arguments {
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget = XmFrame framefControls;
+      XmNleftAttachment = XmATTACH_FORM;
+    };
+  };
+
+  object
+    lightPos: XmRowColumn {
+    controls {
+      XmDrawingArea positionLight;
+    };
+
+    arguments{
+     
+      
+    };	
+  };
+
+  object
+    positionLight: XmDrawingArea {
+    arguments {
+      XmNwidth = HEIGHT;
+      XmNheight = WIDTH;
+    };
+    callbacks {
+      MrmNcreateCallback = procedure initOGLWidgetCB();
+      XmNexposeCallback = procedure exposeCB();
+      XmNinputCallback = procedure initCB();
+    };
+  };
+  
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !! Customize options
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  object
+    framelCus: XmFrame {
+    controls {
+      XmOptionMenu optionsMenu;
+      unmanaged XmPulldownMenu options;
+    };
+    arguments {
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget     = XmFrame framelPos;
+      XmNleftAttachment = XmATTACH_FORM;
+    };
+  };
+
+  object
+     options: XmPulldownMenu{
+     controls {
+       XmPushButton custom;
+       XmPushButton standard;
+       XmPushButton eye;
+       XmPushButton nolight;
+    };
+  };
+
+  object
+    custom: XmPushButton{
+     arguments {
+      XmNlabelString = labelCustom;
+     };
+     callbacks {
+      XmNactivateCallback = procedure customCB();
+    };
+   };
+
+  object
+    standard: XmPushButton{
+     arguments {
+      XmNlabelString = labelStandard;
+     };
+	 callbacks {
+      XmNactivateCallback = procedure standardCB();	
+     };
+   };
+  
+  object
+    eye: XmPushButton{
+     arguments {
+      XmNlabelString = labelEye;
+     };
+     callbacks {
+      XmNactivateCallback = procedure eyeCB();
+     };
+   };
+
+  object
+    nolight: XmPushButton{
+     arguments {
+      XmNlabelString = labelNoLight;
+     };
+     callbacks {
+      XmNactivateCallback = procedure nolightCB();
+     };
+   };
+
+  object
+    optionsMenu : XmOptionMenu {
+        arguments {
+            XmNsubMenuId = XmPulldownMenu options;
+        };
+    };
+
+ 
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !! ok, cancel and apply buttons
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  object
+    okLight: XmPushButton {
+    arguments {
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget = XmFrame framelNum;
+      XmNleftAttachment = XmATTACH_FORM;
+    };
+    callbacks {
+      XmNactivateCallback = procedure okLightCB();
+    };
+  };
+  
+  object
+    cancelLight: XmPushButton {
+    arguments {
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget = XmFrame framelNum;
+      XmNrightAttachment = XmATTACH_FORM;
+    };
+    callbacks{
+      XmNactivateCallback = procedure cancelLightCB();
+    };
+  };
+  
+  object
+    applyLight: XmPushButton {
+    arguments {
+      XmNtopAttachment = XmATTACH_WIDGET;
+      XmNtopWidget =  XmFrame framelNum;
+      XmNleftAttachment =  XmATTACH_WIDGET;
+      XmNleftWidget = XmPushButton okLight;
+    };
+    callbacks {
+      XmNactivateCallback = procedure applyLightCB();
+    };
+  };
+
+  end module; 
+  ! end of module mainLight

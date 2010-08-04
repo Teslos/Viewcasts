@@ -1,0 +1,55 @@
+!
+!
+value
+! Drawing Area
+widthDrawA: 100;
+heightDrawA: 20;
+TEX_ON: 1;
+TEX_OFF: 0;
+
+! Color options
+colorOptions: "Choose Color Table";
+! Transp. options
+transpOptions: "Choose Transperancy";
+! Texture options
+texOptions: "Texture Options";
+
+! Scale
+scaleTransp: "Set Transparency";
+minTransp: 0;
+maxTransp: 100;
+defTransp: 25;
+
+! Cliping 
+minClip: 0;
+maxClip: 100;
+scaleBellowClip: "Bellow";
+defBellowClip: 25;
+defAboveClip: 70;
+scaleAboveClip: "Above";
+clipingOptions: "Cliping Options";
+
+! Color names (option button)
+labelStandard: "Standard Metal";
+labelHotCold: "Hot to Cold";
+labelXray: "Xray";
+labelRainbow: "Rainbow";
+labelColTable1: "Color-table 1";
+labelColTable2: "Color-table 2";
+labelColTable3: "Color-table 3";
+labelColTable4: "Color-table 4";
+labelColTable5: "Color-table 5";
+labelColTable6: "Color-table 6";
+labelColTable7: "Color-table 7";
+labelMars: "Mars";
+labelMars1:"Mars 1";
+labelLandscape: "Landscape";
+
+
+! Texture labels
+labelNoTex: "Without textures";
+labelTex:  "With textures";
+
+! Choose Transparency Color
+labelChooseColor: "Color";
+

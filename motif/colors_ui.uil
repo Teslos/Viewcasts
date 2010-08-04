@@ -1,0 +1,636 @@
+! this is module for colors_interface
+!
+!
+
+
+! module
+
+module mainColors
+names = case_sensitive
+character_set = iso_latin1
+include file ("color_l.uil");
+
+identifier
+   onTex;
+identifier
+   offTex;
+value
+  STANDARD : 0;
+  HOT_COLD : 1;
+  RAINBOW :  2;
+  XRAY    :  3;
+  COLOR_TABLE1 : 4;
+  COLOR_TABLE2 : 5;
+  COLOR_TABLE3 : 6;
+  COLOR_TABLE4 : 7;
+  COLOR_TABLE5 : 8;
+  COLOR_TABLE6 : 9;
+  COLOR_TABLE7 : 10;
+  MARS         : 11;
+  MARS1        : 12;
+  LANDSCAPE    : 13;
+
+procedure
+  loadColorCB();
+  defColorCB();
+  colorNameCB(integer);
+  colorSetTexCB(integer);
+  colorSetTranspCB();
+  initSetTranspCB();
+  okColorsCB();
+  cancelColorsCB();
+  applyColorsCB();
+  initColorScale();
+  exposeColorScale();
+  initColorWidget();
+  setTexCB();
+  setOffTexCB();
+  chooseColorCB();
+  initSetClipCB();
+  clipAboveTexCB();
+  clipBellowTexCB();
+  
+
+!!!!!!!!!!!!!!!!!!!!!!!
+! load dialog 
+!!!!!!!!!!!!!!!!!!!!!!!
+object
+    ladenDialog : imported XmFileSelectionDialog;
+object
+  topWidget: XmDialogShell {
+    controls {
+       XmForm mainFormColor;
+    };
+};
+
+object
+mainFormColor: XmForm {
+  controls {
+    XmRowColumn rowCol0;
+    XmRowColumn rowCol1;
+    XmFrame frameTexClip;
+    XmRowColumn rowColControl;
+    XmSeparator separColor;
+  };
+  !arguments {
+  !  XmNwidth = 500;
+  !  XmNheight = 200;
+  !};
+};
+
+object 
+rowCol0: XmRowColumn {
+  controls {
+    XmFrame frameFControls;
+    XmFrame frameCName; 
+  };
+  arguments{
+    XmNadjustLast  = true;
+    XmNnumColumns  = 2;
+    XmNorientation  = XmHORIZONTAL;
+    XmNtopAttachment = XmATTACH_FORM;
+    XmNleftAttachment = XmATTACH_FORM;
+    XmNrightAttachment = XmATTACH_FORM;
+  };
+};
+object
+frameFControls: XmFrame {
+  controls {
+    XmRowColumn fileControls;
+  };
+  
+  arguments {
+  };
+};
+
+object 
+fileControls: XmRowColumn {
+  controls {
+    XmPushButton load;
+    XmPushButton default;
+    unmanaged XmFileSelectionDialog ladenDialog;
+  };
+};
+
+object 
+load: XmPushButton {
+  arguments {
+    XmNlabelString = 'Load';
+  };
+  callbacks {
+    XmNactivateCallback = procedure loadColorCB();
+  };
+};
+
+object 
+default: XmPushButton {
+  arguments {
+    XmNlabelString = 'Default';
+  };
+
+  callbacks {
+    XmNactivateCallback = procedure defColorCB();
+  };
+};
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Controls for color table
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+object
+frameCName: XmFrame {
+  controls {
+    XmRowColumn colorName;
+    XmLabel titleColor;
+  };
+  arguments { 
+  };
+};  
+
+object titleColor: XmLabel {
+  arguments {
+    XmNchildType = XmFRAME_TITLE_CHILD;
+    XmNlabelString = colorOptions;
+  };
+};
+
+object
+colorName: XmRowColumn {
+  controls {
+    XmDrawingArea colorScale;
+    XmOptionMenu optionColNames;
+  };
+  arguments {
+  };
+};
+
+object
+colorScale: XmDrawingArea {
+  arguments {
+    XmNwidth = widthDrawA;
+    XmNheight = heightDrawA;
+  };
+  callbacks {
+    MrmNcreateCallback = procedure initColorWidget();
+    XmNexposeCallback = procedure exposeColorScale();
+    XmNinputCallback = procedure initColorScale();
+  };
+};
+
+object
+colNames: XmPulldownMenu {
+  controls {
+    XmPushButton standard;
+    XmPushButton hotCold;
+    XmPushButton rainbow;
+    XmPushButton xRay;
+    XmPushButton colTable1;
+    XmPushButton colTable2;
+    XmPushButton colTable3;
+    XmPushButton colTable4;
+    XmPushButton colTable5;
+    XmPushButton colTable6;
+    XmPushButton colTable7; 
+    XmPushButton mars;
+    XmPushButton mars1;
+    XmPushButton landscape;
+  };
+};
+
+object
+standard: XmPushButton{
+  arguments {
+    XmNlabelString = labelStandard;
+  };
+  callbacks{
+	XmNactivateCallback = procedure colorNameCB(STANDARD);
+  };
+};
+
+object
+hotCold: XmPushButton{
+  arguments {
+    XmNlabelString = labelHotCold;
+  };
+  callbacks{
+	XmNactivateCallback = procedure colorNameCB(HOT_COLD);
+  };
+};
+
+object
+rainbow: XmPushButton{
+  arguments {
+    XmNlabelString = labelRainbow;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(RAINBOW);
+  };
+};
+  
+object
+xRay: XmPushButton{
+  arguments {
+    XmNlabelString = labelXray;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(XRAY);
+  };
+};
+
+object
+colTable1: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable1;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE1);
+  };
+};
+
+object
+colTable2: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable2;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE2);
+  };
+};
+
+object
+colTable3: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable3;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE3);
+  };
+};
+
+object
+colTable4: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable4;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE4);
+  };
+};
+
+object
+colTable5: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable5;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE5);
+  };
+};
+
+object
+colTable6: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable6;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE6);
+  };
+};
+
+object
+colTable7: XmPushButton{
+  arguments {
+    XmNlabelString = labelColTable7;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(COLOR_TABLE7);
+  };
+};
+
+object
+mars : XmPushButton{
+  arguments {
+    XmNlabelString = labelMars;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(MARS);
+  };
+};
+
+object
+mars1 : XmPushButton{
+  arguments {
+    XmNlabelString = labelMars1;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(MARS1);
+  };
+};
+
+object
+landscape : XmPushButton{
+  arguments {
+    XmNlabelString = labelLandscape;
+  };
+  callbacks {
+	XmNactivateCallback = procedure colorNameCB(LANDSCAPE);
+  };
+};
+
+object
+optionColNames: XmOptionMenu{
+  arguments {
+    XmNsubMenuId = XmPulldownMenu colNames;
+  };
+};
+
+object
+rowCol1: XmRowColumn {
+  controls {
+    XmFrame frameTex;
+    XmFrame frameCTransp;
+  };
+  arguments {
+    XmNorientation   = XmHORIZONTAL;
+    XmNleftAttachment = XmATTACH_FORM;
+    XmNtopAttachment = XmATTACH_WIDGET;
+    XmNtopWidget     = XmFrame frameCName;
+    XmNrightAttachment = XmATTACH_FORM;
+  };
+};
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Texture frame (controls)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object 
+frameTex: XmFrame {
+  controls {
+   XmRadioBox radioBoxCTex;
+   XmLabel    titleTex;
+  };
+  arguments {
+  };
+};
+
+object 
+titleTex: XmLabel {
+  arguments {
+    XmNchildType = XmFRAME_TITLE_CHILD;
+    XmNlabelString = texOptions;
+  };
+};
+
+object
+radioBoxCTex: XmRadioBox {
+  controls {
+    XmToggleButton withoutTex;
+    XmToggleButton withTex;
+  };	
+  arguments {
+    XmNentryClass = class_rec_name('XmToggleButton');
+  };
+};
+
+object 
+withTex: XmToggleButton {
+ arguments {
+   XmNlabelString = labelTex;
+ };
+ callbacks {
+   MrmNcreateCallback = procedure setTexCB();	
+   XmNvalueChangedCallback = procedure colorSetTexCB(TEX_ON);
+ };
+};
+
+object
+withoutTex: XmToggleButton {
+  arguments{
+    XmNlabelString = labelNoTex;
+  };
+  callbacks {
+    MrmNcreateCallback      = procedure setOffTexCB();
+    XmNvalueChangedCallback = procedure colorSetTexCB(TEX_OFF);
+  };
+}; 
+ 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! End of Texture frame
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Transparecy control
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object
+frameCTransp: XmFrame {
+  controls {
+    XmRowColumn rowColTransp;
+    XmLabel titleTransp;
+  };
+  arguments {
+      };
+};
+
+object titleTransp: XmLabel {
+  arguments {
+    XmNchildType = XmFRAME_TITLE_CHILD;
+    XmNlabelString = transpOptions;
+  };
+};
+
+object
+rowColTransp: XmRowColumn {
+  controls {
+    XmScale chooseTransp;
+    XmPushButton chooseColor;
+  };
+  arguments {
+    XmNorientation = XmVERTICAL;
+  };
+};
+    
+object
+chooseTransp: XmScale {
+  arguments {
+    XmNmaximum = maxTransp;
+    XmNminimum = minTransp;
+    XmNvalue   = defTransp;  
+    XmNshowValue = true;
+    XmNdecimalPoints = 2;
+    XmNtitleString = scaleTransp;
+    XmNorientation = XmHORIZONTAL;
+  };
+  callbacks {
+    MrmNcreateCallback      = procedure initSetTranspCB();	
+    XmNvalueChangedCallback = procedure colorSetTranspCB();
+    XmNdragCallback = procedure colorSetTranspCB();
+  };
+};
+
+object
+chooseColor: XmPushButton {
+  arguments {
+    XmNlabelString = labelChooseColor;
+  };
+  callbacks {
+    XmNactivateCallback  = procedure chooseColorCB();
+  };
+};
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!! Cliping widget
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object
+frameTexClip: XmFrame {
+  controls {
+    XmRowColumn rowColClip;
+    XmLabel frameTitle;
+  };
+  arguments {
+    XmNleftAttachment = XmATTACH_FORM;
+    XmNrightAttachment = XmATTACH_FORM;
+    XmNtopAttachment = XmATTACH_WIDGET;
+    XmNtopWidget    = rowColTransp;
+  };
+};
+
+object
+frameTitle: XmLabel {
+  arguments {
+    XmNchildType = XmFRAME_TITLE_CHILD;
+    XmNlabelString = clipingOptions;
+  };
+};
+
+object
+rowColClip: XmRowColumn {
+  controls {
+    XmScale scaleAbove;
+    XmScale scaleBellow;
+  };
+  arguments {
+    XmNorientation = XmVERTICAL;
+  };
+};
+
+object
+scaleAbove: XmScale {
+  arguments {
+    XmNmaximum = maxClip;
+    XmNminimum = minClip;
+    XmNvalue   = defAboveClip;  
+    XmNshowValue = true;
+    XmNtitleString = scaleAboveClip;
+    XmNorientation = XmHORIZONTAL;
+  };
+  callbacks {
+    MrmNcreateCallback      = procedure initSetClipCB();	
+    XmNvalueChangedCallback = procedure clipAboveTexCB();
+    XmNdragCallback = procedure clipAboveTexCB();
+  };
+};
+
+object
+scaleBellow: XmScale {
+  arguments {
+    XmNmaximum = maxClip;
+    XmNminimum = minClip;
+    XmNvalue   = defBellowClip;  
+    XmNshowValue = true;
+    XmNtitleString = scaleBellowClip;
+    XmNorientation = XmHORIZONTAL;
+  };
+  callbacks {
+    MrmNcreateCallback      = procedure initSetClipCB();	
+    XmNvalueChangedCallback = procedure clipBellowTexCB();
+    XmNdragCallback = procedure clipBellowTexCB();
+  };
+};
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!! Separator
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object
+separColor: XmSeparator {
+  arguments {
+    XmNleftAttachment = XmATTACH_FORM;
+    XmNrightAttachment = XmATTACH_FORM;
+    XmNseparatorType = XmDOUBLE_LINE;
+    XmNorientation = XmHORIZONTAL;
+    XmNtopAttachment = XmATTACH_WIDGET;
+    XmNtopWidget = frameTexClip;
+  };
+};
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!! ok, cancel and apply buttons
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+object
+rowColControl: XmRowColumn {
+  controls {
+   XmPushButton ok;
+   XmPushButton cancel;
+   XmPushButton apply;
+  };
+  arguments {
+   XmNtopAttachment = XmATTACH_WIDGET; 
+   XmNtopWidget = XmSeparator separColor;
+   XmNbottomAttachment = XmATTACH_FORM;
+   XmNleftAttachment = XmATTACH_FORM;
+   XmNrightAttachment = XmATTACH_FORM;
+  
+   XmNorientation = XmVERTICAL;
+   XmNpacking = XmPACK_COLUMN;
+   XmNnumColumns = 3;
+   XmNadjustLast = false;
+  };
+};
+
+object
+ok: XmPushButton {
+  arguments {
+    XmNmarginWidth = 5;
+    XmNmarginHeight = 5;
+    XmNmarginLeft = 10;
+    XmNlabelString = 'Ok';
+  };
+  callbacks {
+    XmNactivateCallback = procedure okColorsCB();
+  };
+};
+  
+object
+cancel: XmPushButton {
+  arguments {
+    XmNmarginHeight = 5;
+    XmNmarginWidth = 5;
+    XmNlabelString = 'Cancel';
+  };
+  callbacks{
+    XmNactivateCallback = procedure cancelColorsCB();
+  };
+};
+  
+object
+  apply: XmPushButton {
+  arguments {
+!     XmNrightAttachment =  XmATTACH_FORM;
+!    XmNleftAttachment =  XmATTACH_WIDGET;
+!    XmNleftWidget = XmPushButton ok;
+     XmNlabelString = 'Apply';
+  };
+  callbacks {
+    XmNactivateCallback = procedure applyColorsCB();
+  };
+};
+
+end module; 
+! end of module mainColors
+
+    
+
+  
+
+
+
